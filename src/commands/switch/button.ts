@@ -1,27 +1,19 @@
 import { Command } from "../../def";
-import { errorEmbed } from "../../lib/embeds";
 import { send } from "../../lib/switch";
-
-export const validButtons = ["A", "B", "X", "Y", "PLUS", "MINUS", "L", "R", "ZL", "ZR"];
+import { defaultButtonDuration, validButtons } from "../../lib/constants";
+import { validateDuration, validateInput } from "../../lib/common";
 
 export default new Command({
     name: "button",
-    description: "Send a button press",
+    description: `Send a button press, valid buttons are ${validButtons.join(", ")}`,
     handler: async (message, args) => {
-        if (!args[0]) {
-            await message.reply({ embeds: [errorEmbed(`No button specified. Available buttons are ${validButtons.join(", ")}`)] });
-            return;
-        }
+        const button = args[0]?.toUpperCase();
+        const duration = parseInt(args[1]);
+        validateInput(button, "button");
+        validateDuration(duration);
 
-        const button = args[0].toUpperCase();
-
-        if (!validButtons.includes(args[0].toUpperCase())) {
-            await message.reply({ embeds: [errorEmbed(`Invalid button! Available buttons are ${validButtons.join(", ")}`)] });
-            return;
-        }
-
-        send(`click ${button}`);
-
+        send(`press ${button}`);
+        setTimeout(async () => { send(`release ${button}`)}, duration || defaultButtonDuration);
         await message.react("✅");
     },
 })

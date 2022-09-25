@@ -1,27 +1,19 @@
 import { Command } from "../../def";
-import { errorEmbed } from "../../lib/embeds";
 import { send } from "../../lib/switch";
-
-export const validDirections = ["UP", "DOWN", "LEFT", "RIGHT"];
+import { defaultDpadDuration, validDirections } from "../../lib/constants";
+import { validateDuration, validateInput } from "../../lib/common";
 
 export default new Command({
     name: "dpad",
-    description: "Send a D-PAD press",
+    description: `Send a D-PAD press, valid directions are ${validDirections.join(", ")}`,
     handler: async (message, args) => {
-        if (!args[0]) {
-            await message.reply({ embeds: [errorEmbed(`No direction specified. Available direction are ${validDirections.join(", ")}`)] });
-            return;
-        }
+        const direction = args[0]?.toUpperCase();
+        const duration = parseInt(args[1]);
+        validateInput(direction, "dpad");
+        validateDuration(duration);
 
-        const direction = args[0].toUpperCase();
-
-        if (!validDirections.includes(args[0].toUpperCase())) {
-            await message.reply({ embeds: [errorEmbed(`Invalid direction! Available directions are ${validDirections.join(", ")}`)] });
-            return;
-        }
-
-        send(`click D${direction}`);
-
+        send(`press D${direction}`);
+        setTimeout(async () => { send(`release D${direction}`)}, duration || defaultDpadDuration);
         await message.react("✅");
     },
 })

@@ -1,7 +1,7 @@
 import { createConnection } from "net";
-import { client } from "..";
+import config from "./config";
 
-export const connection = createConnection(6000, client.config.switch.ip);
+export const connection = createConnection(6000, config.switch.ip);
 connection.setEncoding("utf-8");
 
 export const send = (content: string) => connection.write(`${content} \r\n`);

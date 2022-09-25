@@ -31,17 +31,3 @@ export interface Config {
         ip: string;
     }
 }
-
-export interface CClientOptions extends ClientOptions {
-    config: Config;
-}
-
-export class CClient extends Client {
-    config: Config;
-
-    public constructor(options: CClientOptions) {
-        super(options);
-
-        this.config = options.config;
-    }
-}
